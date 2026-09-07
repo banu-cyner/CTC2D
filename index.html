@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Tangkap Koin 2D</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <h2>🎮 CATCH THE COIN</h2>
+
+    <!-- MENU AWAL -->
+    <div id="menu-section">
+        <h3>Registrasi Pemain</h3>
+        <input type="text" id="username" placeholder="Masukkan Username" required><br>
+        <input type="number" id="wa" placeholder="Nomor WhatsApp (Contoh: 08123...)" required><br>
+        <button onclick="startGame()">Mulai Bermain!</button>
+        
+        <h3>🏆 Leaderboard Top 10</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Posisi</th>
+                    <th>Username</th>
+                    <th>Skor</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboard-body">
+                <tr><td colspan="3">Memuat leaderboard...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- AREA GAME -->
+    <div id="game-section" class="hidden">
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
+        <p>Gunakan panah <b>Kiri / Kanan</b> di keyboard untuk menggerakkan papan.</p>
+    </div>
+
+    <!-- GAME OVER -->
+    <div id="over-section" class="hidden">
+        <h2>GAME OVER!</h2>
+        <p>Skor Akhir Anda: <span id="final-score">0</span></p>
+        <p id="status-msg">Mengirim data ke Google Sheets...</p>
+        <button onclick="restartGame()">Kembali ke Menu</button>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
