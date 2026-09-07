@@ -1,4 +1,4 @@
-// Ganti nilai ini dengan URL Google Apps Script Anda
+// Ganti dengan URL Google Apps Script kamu
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxsmnj2czsiFkscjbrlZYPCVddaGA2xWBuO-TLagk7GhKO4fi_hrEN9qpbc_mU5D9WjfA/exec";
 
 let username = "";
@@ -6,21 +6,19 @@ let wa = "";
 let score = 0;
 let gameOver = false;
 
-// Element Canvas
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
-let player = { x: 160, y: 360, width: 80, height: 15, speed: 7 };
-let coin = { x: Math.random() * 370, y: 0, size: 15, speed: 4 };
+let player = { x: 135, y: 340, width: 80, height: 16, speed: 7 };
+let coin = { x: Math.random() * 320 + 15, y: 0, size: 12, speed: 3.5 };
 let rightPressed = false;
 let leftPressed = false;
 
-// Ambil Leaderboard saat halaman selesai dimuat
 window.onload = () => {
     fetchLeaderboard();
 };
 
-// Event Kontrol Keyboard
+// --- KONTROL KEYBOARD (PC) ---
 document.addEventListener("keydown", (e) => {
     if (e.key === "Right" || e.key === "ArrowRight") rightPressed = true;
     if (e.key === "Left" || e.key === "ArrowLeft") leftPressed = true;
@@ -31,7 +29,24 @@ document.addEventListener("keyup", (e) => {
     if (e.key === "Left" || e.key === "ArrowLeft") leftPressed = false;
 });
 
-// Mulai Game
+// --- KONTROL SENTUH / TOUCHSCREEN (HP) ---
+function handleTouch(e) {
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const touch = e.touches[0] || e.changedTouches[0];
+    const touchX = touch.clientX - rect.left;
+    
+    // Papan bergerak mengikuti posisi jari secara presisi
+    player.x = touchX - player.width / 2;
+
+    // Batasi pergerakan agar tidak melenceng keluar area
+    if (player.x < 0) player.x = 0;
+    if (player.x > canvas.width - player.width) player.x = canvas.width - player.width;
+}
+
+canvas.addEventListener("touchstart", handleTouch, { passive: false });
+canvas.addEventListener("touchmove", handleTouch, { passive: false });
+
 function startGame() {
     username = document.getElementById("username").value.trim();
     wa = document.getElementById("wa").value.trim();
@@ -46,37 +61,39 @@ function startGame() {
 
     score = 0;
     gameOver = false;
+    player.x = (canvas.width - player.width) / 2;
     coin.y = 0;
-    coin.speed = 4;
+    coin.speed = 3.5;
     
     requestAnimationFrame(updateGame);
 }
 
-// Loop Utama Game
 function updateGame() {
     if (gameOver) return;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Gerak Pemain
+    // Gerak Keyboard
     if (rightPressed && player.x < canvas.width - player.width) player.x += player.speed;
     if (leftPressed && player.x > 0) player.x -= player.speed;
 
     // Gambar Papan Pemain
     ctx.fillStyle = "#ff4757";
-    ctx.fillRect(player.x, player.y, player.width, player.height);
+    ctx.beginPath();
+    ctx.roundRect(player.x, player.y, player.width, player.height, 6);
+    ctx.fill();
 
     // Gerak Koin
     coin.y += coin.speed;
 
     // Gambar Koin
     ctx.beginPath();
-    ctx.arc(coin.x + 7, coin.y, coin.size, 0, Math.PI * 2);
+    ctx.arc(coin.x, coin.y, coin.size, 0, Math.PI * 2);
     ctx.fillStyle = "#eccc68";
     ctx.fill();
     ctx.closePath();
 
-    // Deteksi Benturan Koin & Pemain
+    // Deteksi Kena Koin
     if (
         coin.y + coin.size >= player.y &&
         coin.x >= player.x &&
@@ -84,32 +101,30 @@ function updateGame() {
     ) {
         score += 10;
         coin.y = 0;
-        coin.x = Math.random() * (canvas.width - 20);
-        coin.speed += 0.3; // Koin bertambah cepat
+        coin.x = Math.random() * (canvas.width - 30) + 15;
+        coin.speed += 0.2;
     }
 
-    // Cek Game Over (Koin Jatuh)
+    // Game Over jika Koin Jatuh
     if (coin.y > canvas.height) {
         endGame();
         return;
     }
 
-    // Tampilkan Skor Real-time
+    // Tampilkan Skor
     ctx.fillStyle = "#ffffff";
-    ctx.font = "16px Arial";
-    ctx.fillText("Skor: " + score, 10, 25);
+    ctx.font = "bold 16px Arial";
+    ctx.fillText("Skor: " + score, 15, 30);
 
     requestAnimationFrame(updateGame);
 }
 
-// Game Selesai & Kirim Skor
 function endGame() {
     gameOver = true;
     document.getElementById("game-section").classList.add("hidden");
     document.getElementById("over-section").classList.remove("hidden");
     document.getElementById("final-score").innerText = score;
 
-    // Kirim Data Skor ke Google Sheets via API
     fetch(SCRIPT_URL, {
         method: "POST",
         mode: "no-cors",
@@ -121,7 +136,7 @@ function endGame() {
         })
     })
     .then(() => {
-        document.getElementById("status-msg").innerText = "Skor berhasil disimpan ke Leaderboard!";
+        document.getElementById("status-msg").innerText = "Skor berhasil disimpan!";
         fetchLeaderboard();
     })
     .catch(error => {
@@ -130,7 +145,6 @@ function endGame() {
     });
 }
 
-// Mengambil Data Leaderboard dari Google Sheets
 function fetchLeaderboard() {
     fetch(SCRIPT_URL)
     .then(response => response.json())
@@ -161,7 +175,6 @@ function restartGame() {
     document.getElementById("status-msg").innerText = "Mengirim data ke Google Sheets...";
 }
 
-// Sanitasi Input untuk Mencegah XSS
 function escapeHtml(text) {
     return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-}
+        }
