@@ -1,5 +1,5 @@
 // Ganti dengan URL Google Apps Script kamu
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxsmnj2czsiFkscjbrlZYPCVddaGA2xWBuO-TLagk7GhKO4fi_hrEN9qpbc_mU5D9WjfA/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyGrlEiJYN9WMyiBZRX7S9Wle57YKVm48cXctUnwlmF5PRVtwXFLO692bH8gnP0Iw/exec";
 
 let username = "";
 let wa = "";
