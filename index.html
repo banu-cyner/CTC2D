@@ -2,29 +2,29 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Tangkap Koin 2D</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Game 2D Tangkap Koin</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="container">
-    <h2>🎮 CATCH THE COIN</h2>
+    <h2>🪙 CATCH THE COIN 2D</h2>
 
     <!-- MENU AWAL -->
     <div id="menu-section">
-        <h3>Registrasi Pemain</h3>
-        <input type="text" id="username" placeholder="Masukkan Username" required><br>
-        <input type="number" id="wa" placeholder="Nomor WhatsApp (Contoh: 08123...)" required><br>
+        <h3>Menu Registrasi Pemain</h3>
+        <input type="text" id="username" placeholder="Masukkan Username / Nama" required>
+        <input type="tel" id="wa" placeholder="Nomor WhatsApp (Contoh: 08123456789)" required>
         <button onclick="startGame()">Mulai Bermain!</button>
         
         <h3>🏆 Leaderboard Top 10</h3>
         <table>
             <thead>
                 <tr>
-                    <th>Posisi</th>
-                    <th>Username</th>
-                    <th>Skor</th>
+                    <th width="15%">No</th>
+                    <th width="55%">Username</th>
+                    <th width="30%">Skor</th>
                 </tr>
             </thead>
             <tbody id="leaderboard-body">
@@ -35,16 +35,17 @@
 
     <!-- AREA GAME -->
     <div id="game-section" class="hidden">
-        <canvas id="gameCanvas" width="400" height="400"></canvas>
-        <p>Gunakan panah <b>Kiri / Kanan</b> di keyboard untuk menggerakkan papan.</p>
+        <canvas id="gameCanvas" width="350" height="380"></canvas>
+        <p class="controls-hint">💡 <b>Kontrol:</b> Geser layar HP / Sentuh sisi kanan-kiri / Gunakan tombol panah keyboard.</p>
     </div>
 
-    <!-- GAME OVER -->
+    <!-- HASIL / GAME OVER -->
     <div id="over-section" class="hidden">
         <h2>GAME OVER!</h2>
-        <p>Skor Akhir Anda: <span id="final-score">0</span></p>
+        <p>Skor Akhir Anda:</p>
+        <div id="final-score">0</div>
         <p id="status-msg">Mengirim data ke Google Sheets...</p>
-        <button onclick="restartGame()">Kembali ke Menu</button>
+        <button onclick="restartGame()">Kembali ke Menu Utama</button>
     </div>
 </div>
 
